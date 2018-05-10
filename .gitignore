@@ -1,0 +1,3 @@
+*.pyc
+scrapy_log.txt
+scraped_data_utf8.json
