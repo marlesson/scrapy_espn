@@ -6,7 +6,6 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 import json
-from pandas.io.json import json_normalize
 import codecs
 
 class SavePipeline(object):

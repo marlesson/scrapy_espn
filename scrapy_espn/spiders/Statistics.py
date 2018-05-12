@@ -2,7 +2,6 @@
 import scrapy
 import re
 from time import gmtime, strftime
-import pandas as pd
 import numpy as np
 from datetime import timedelta, date
 
