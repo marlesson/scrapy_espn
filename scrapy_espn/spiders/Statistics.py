@@ -15,9 +15,13 @@ class StatisticsSpider(scrapy.Spider):
 #    start_urls = ['http://www.espn.com/soccer/fixtures/_/date/20180509/league/bra.copa_do_brazil']
 
     # Start and end craller 
-    start_date = date(2016, 1, 1)
+    start_date = date(2014, 1, 1)
     end_date   = date(2017, 12, 31)
+
+    start_date = date(2018, 3, 30)
+    end_date   = date(2018, 4, 30)
     league     = ['bra.1'] #
+    #['bra.1', 'bra.copa_do_brazil']
 
     def start_requests(self):
         url_base = 'http://www.espn.com/soccer/fixtures/_/date'
@@ -47,7 +51,13 @@ class StatisticsSpider(scrapy.Spider):
                               self.parse_last_games(response, team_away['away_name'], 'teamFormAway'))
 
 
-      item    = { **{'url': url, 'championship': championship}, **team_home, **team_home_last_games, **team_away, **team_away_last_games }
+      item     = {}
+      item.update({'url': url, 'gameID': gameID, 'championship': championship})
+      item.update(team_home)
+      item.update(team_home_last_games)
+      item.update(team_away)
+      item.update(team_away_last_games)
+
 
       request = scrapy.Request('http://www.espn.com/soccer/match?gameId='+gameID,
                                  callback=self.parse_match, meta={'item': item})
@@ -60,10 +70,12 @@ class StatisticsSpider(scrapy.Spider):
       date    = response.css("#gamepackage-game-information").xpath('//span[@data-date]').css("::attr(data-date)").extract_first()
       adress  = response.css("#gamepackage-game-information .address span ::text").extract_first()
 
-      yield {**response.meta['item'], **{'stadium': stadium, 'date': date, 'adress': adress}}
+      # {**response.meta['item'], **{'stadium': stadium, 'date': date, 'adress': adress}}
+      obj     = response.meta['item']
+      obj.update({'stadium': stadium, 'date': date, 'adress': adress})
+      yield obj
 
     def parse_team(self, response, team):
-      
       # Fix. In some cases, the team is changed
       if team == 'home':
         team2 = 'away'
@@ -83,7 +95,9 @@ class StatisticsSpider(scrapy.Spider):
       values = {'name': name, 'score': score, 'possesion': possesion, 'shots': shots, 'shots_goal': shots_goal}
       stats  = dict(zip(stats_label, stats_value))
       
-      return {**values, **stats}
+      obj    = values.copy()
+      obj.update(stats)
+      return obj
 
 
     def parse_last_games(self, response, team_name, tag):
@@ -139,6 +153,7 @@ class StatisticsSpider(scrapy.Spider):
       return {'last_five_all_games': last_five_all_games, 'last_five_games': last_five_games}
 
     def rename_key_by_team(self, team, h):
+      print(h)
       result = {}
       for k, value in h.items():
         result[team+"_"+k] = value

@@ -94,5 +94,5 @@ ITEM_PIPELINES = {
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-LOG_STDOUT = True
-LOG_FILE = 'scrapy_log.txt'
+#LOG_STDOUT = True
+#LOG_FILE = 'scrapy_log.txt'
