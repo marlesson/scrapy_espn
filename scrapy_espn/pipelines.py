@@ -11,8 +11,7 @@ import codecs
 
 class SavePipeline(object):
     def open_spider(self, spider):
-        #self.file = open('dataset.jl', 'a')
-        self.file = codecs.open('scraped_data_utf8.json', 'a', encoding='utf-8')
+        self.file = codecs.open('dataset/dataset.jl', 'a', encoding='utf-8')
 
     def close_spider(self, spider):
         self.file.close()
@@ -30,9 +29,9 @@ class CleanDataPipeline(object):
           item[field] = item[field].replace('\r', ' ')
           item[field] = item[field].replace('\n', ' ')
           item[field] = item[field].strip()
-          
-        item['home_possesion'] = item['home_possesion'].replace('%', ' ')
-        item['away_possesion'] = item['away_possesion'].replace('%', ' ')
+        
+          item['home_possesion'] = str(item['home_possesion']).replace('%', ' ')
+          item['away_possesion'] = str(item['away_possesion']).replace('%', ' ')
 
         # Parse float
         for field in ['foulsCommitted', 'last_five_all_games', 

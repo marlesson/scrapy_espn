@@ -15,13 +15,13 @@ class StatisticsSpider(scrapy.Spider):
 #    start_urls = ['http://www.espn.com/soccer/fixtures/_/date/20180509/league/bra.copa_do_brazil']
 
     # Start and end craller 
-    start_date = date(2014, 1, 1)
-    end_date   = date(2017, 12, 31)
+    #start_date = date(2014, 1, 1)
+    #end_date   = date(2017, 12, 31)
 
-    start_date = date(2018, 3, 30)
-    end_date   = date(2018, 4, 30)
-    league     = ['bra.1'] #
-    #['bra.1', 'bra.copa_do_brazil']
+    start_date = date(2018, 1, 1)
+    end_date   = date(2018, 12, 31)
+    #league     = ['bra.1']
+    league     = ['bra.1', 'bra.copa_do_brazil']
 
     def start_requests(self):
         url_base = 'http://www.espn.com/soccer/fixtures/_/date'
@@ -90,7 +90,10 @@ class StatisticsSpider(scrapy.Spider):
       possesion   = response.xpath('//span[@data-home-away="{}"]'.format(team)).css(".chartValue ::text").extract_first()
 
       shots = response.css("div.shots").xpath('//span[@data-home-away="{}"]'.format(team)).css(".number ::text").extract_first()
-      shots, shots_goal, _ = re.split("\(|\)", shots)      
+      if shots is None:
+        shots = shots_goal = None
+      else:
+        shots, shots_goal, _ = re.split("\(|\)", shots)      
 
       values = {'name': name, 'score': score, 'possesion': possesion, 'shots': shots, 'shots_goal': shots_goal}
       stats  = dict(zip(stats_label, stats_value))
